@@ -83,10 +83,11 @@ app.get("/getRandomPopularAttractions", (req, res) => {
     }
 });
 
-app.post("/register",(req, res) => {
-    sqlQuery("INSERT INTO users (username,password,firstName, lastName, country,city,email,question,answer)"
+/*app.post("/register",(req, res) => {
+   
+    var register=sqlQuery("INSERT INTO users (username,password,firstName, lastName, country,city,email,question,answer)"
     +"VALUES("+req.body.userName+","+req.body.password+","+req.body.firstName+","+ req.body.lastName+","+req.body.country+","+req.body.city+","+req.body.email+","+req.body.question+","+req.body.answer+")");
-    
+   var registerobject=JSON.parse(JSON.stringify(register)); 
     for(var i=0; i<interests.length;i++){
         sqlQuery("INSERT INTO userInterests (username,categoryName) VALUES("+req.body.userName+","+req.body.interests[i]+")");
     }
@@ -94,7 +95,7 @@ app.post("/register",(req, res) => {
     console.log("register");
 });
 
-
+*/
 
 app.get("/getRandomPopularAttractions", (req, res) => {
     res.status(200).send(getRandomPopularAttractions());
