@@ -2,7 +2,7 @@
 
 const express = require("express");
 const app = express();
-
+app.use(express.json());
 
 app.post("/login/:userName/:password", (req, res) => {
  //   currUser=JSON.parse(req.params);
@@ -83,19 +83,19 @@ app.get("/getRandomPopularAttractions", (req, res) => {
     }
 });
 
-/*app.post("/register",(req, res) => {
-   
+app.post("/register",(req, res) => {
+    var registerobject=JSON.parse(JSON.stringify(req.body)); 
     var register=sqlQuery("INSERT INTO users (username,password,firstName, lastName, country,city,email,question,answer)"
-    +"VALUES("+req.body.userName+","+req.body.password+","+req.body.firstName+","+ req.body.lastName+","+req.body.country+","+req.body.city+","+req.body.email+","+req.body.question+","+req.body.answer+")");
-   var registerobject=JSON.parse(JSON.stringify(register)); 
-    for(var i=0; i<interests.length;i++){
-        sqlQuery("INSERT INTO userInterests (username,categoryName) VALUES("+req.body.userName+","+req.body.interests[i]+")");
+    +"VALUES('"+req.body.userName+"','"+req.body.password+"','"+req.body.firstName+"','"+ req.body.lastName+"','"+req.body.country+"','"+req.body.city+"','"+req.body.email+"','"+req.body.question+"','"+req.body.answer+"')");
+  
+    for(var i=0; i<req.body.interests.length;i++){
+        sqlQuery("INSERT INTO userInterests (username,categoryName) VALUES('"+req.body.userName+"','"+req.body.interests[i].categoryName+"')");
     }
     res.status(200).send("succes");
     console.log("register");
 });
 
-*/
+
 
 app.get("/getRandomPopularAttractions", (req, res) => {
     res.status(200).send(getRandomPopularAttractions());
@@ -143,9 +143,9 @@ app.put("/viewAttraction/:attractionName", (req, res) => {
 
 
 const port = process.env.PORT || 3000; //environment variable
-var bodyParser=require("")
-app.use(express.json());
-app.use(bodyParser.urlencoded)
+//var bodyParser=require("")
+//app.use(express.json());
+//app.use(bodyParser.urlencoded)
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
