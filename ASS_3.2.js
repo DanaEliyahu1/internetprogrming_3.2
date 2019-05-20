@@ -50,10 +50,13 @@ app.post("/forgotPassword/:userName/:answer", (req, res) => {
 
 
 app.get("/getRandomPopularAttractions", (req, res) => {
-    goodAttraction=(sqlQuery("SELECT * FROM attractions WHERE reating >= 4"));
+    console.log('1');
+    goodAttraction=(sqlQuery("SELECT * FROM attractions WHERE rating >= 4"));
+    console.log(goodAttraction);
     var size= goodAttraction.length;
+    console.log('3');
     if(size<4){
-        res.status(200).send(goodAttraction);
+       // res.status(200).send(goodAttraction);
     }
     else{ 
           var attractionResult=[];
@@ -76,14 +79,19 @@ app.get("/getRandomPopularAttractions", (req, res) => {
     
         }
 
-    res.status(200).send(attractionResult);
+    //res.status(200).send(attractionResult);
     }
-    -
 });
 
-app.post("/register/:userName/:firstName/:lastName/:country/:city/:email/:interests/:question/:answer", (req, res) => {
-    res.status(200).send(register(req.params));
-    console.log("Got  Request");
+app.post("/register",(req, res) => {
+    sqlQuery("INSERT INTO users (username,password,firstName, lastName, country,city,email,question,answer)"
+    +"VALUES("+req.body.userName+","+req.body.password+","+req.body.firstName+","+ req.body.lastName+","+req.body.country+","+req.body.city+","+req.body.email+","+req.body.question+","+req.body.answer+")");
+    
+    for(var i=0; i<interests.length;i++){
+        sqlQuery("INSERT INTO userInterests (username,categoryName) VALUES("+req.body.userName+","+req.body.interests[i]+")");
+    }
+    res.status(200).send("succes");
+    console.log("register");
 });
 
 
@@ -134,6 +142,9 @@ app.put("/viewAttraction/:attractionName", (req, res) => {
 
 
 const port = process.env.PORT || 3000; //environment variable
+var bodyParser=require("")
+app.use(express.json());
+app.use(bodyParser.urlencoded)
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
