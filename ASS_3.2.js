@@ -31,8 +31,9 @@ app.get("/getCategories", (req, res) => {
     console.log("getCategories");
 });
 
-app.get("/getAtractionByCategory/:category", (req, res) => {
+app.get("/getAtractionByCategory/:category",async (req, res) => {
    // currCategory=JSON.parse(req.params);
+  var registerobject=await (sqlQuery("SELECT * FROM attractions WHERE category='"+req.params.category+"'")); 
     res.status(200).send(sqlQuery("SELECT * FROM attractions WHERE category='"+req.params.category+"'"));
     console.log("getAtractionByCategory");
 });
@@ -51,8 +52,10 @@ app.post("/forgotPassword/:userName/:answer", (req, res) => {
 
 app.get("/getRandomPopularAttractions", (req, res) => {
     console.log('1');
-    goodAttraction=(sqlQuery("SELECT * FROM attractions WHERE rating >= 4"));
+
+   var goodAttraction=(sqlQuery("SELECT * FROM attractions "));
     console.log(goodAttraction);
+    goodAttraction=JSON.parse(JSON.stringify(goodAttraction));
     var size= goodAttraction.length;
     console.log('3');
     if(size<4){
@@ -167,8 +170,8 @@ app.get('/select', function(req, res){
     })
 })
 
-function sqlQuery(query){
-    DButilsAzure.execQuery(query)
+async function sqlQuery(query){
+   await DButilsAzure.execQuery(query)
 .then(function(result){
     //console.log(result);
         return result;
