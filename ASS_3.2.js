@@ -106,14 +106,19 @@ app.post("/updateFavoriteAttractions",async (req, res) => {
     res.status(200).send( await sqlQuery("INSERT INTO userAttractions(username,attractionName) VALUES('"+req.body.username+"','"+req.body.attractionName+"')"));
     console.log("updateFavoriteAttractions");
 });
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-app.get("/getFavoriteAttractions/:userName", (req, res) => {
-    res.status(200).send(getFavoriteAttractions(req.params));
-    console.log("Got GET Request");
-});
 
-app.put("/updateMyAttractionSort/:userName", (req, res) => {
-    res.status(200).send(updateMyAttractionSort(req.params));
+app.get("/getFavoriteAttractions/:username", async(req, res) => {
+    res.status(200).send(await sqlQuery("SELECT * FROM attractions WHERE attractionName IN"
+    +"(SELECT attractionName FROM userAttractions WHERE username='"+req.params.username+"')"));
+    console.log("getFavoriteAttractions");
+});
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+app.put("/updateMyAttractionSort/:userName/:rankArray",async (req, res) => {
+    var arr= req.params.rankArray.split("&");
+    for(var i=1; i<arr.length;i++){
+        await(sqlQuery("UPDATE userInterests SET rank= "+i+"WHERE attractionName='"+req.params.rankArray[i]+"'"));
+    }
+    res.status(200).send("success");
     console.log("Got GET Request");
 });
 
