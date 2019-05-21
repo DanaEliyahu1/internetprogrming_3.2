@@ -4,13 +4,8 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
-app.post("/login",(req, res) => {
- //   currUser=JSON.parse(req.params);
-    var userRecord= sqlQuery("SELECT password FROM users WHERE username='"+req.body.username+"'");
-  //  var userRecord="SELECT password FROM users WHERE username='"+req.body.username+"'";
-   // DButilsAzure.execQuery(userRecord)
-   //.then(function(result){
-    //console.log(userRecord[0]['username']);
+app.post("/login",async (req, res) => {
+    var userRecord= await sqlQuery("SELECT password FROM users WHERE username='"+req.body.username+"'");
     if(userRecord.length>0){
 
         if(req.body.password===userRecord[0]['password']){
@@ -31,22 +26,22 @@ app.post("/login",(req, res) => {
 });
 
 
-app.get("/getCategories", (req, res) => {
-    res.status(200).send(sqlQuery("SELECT * FROM categories"));
+app.get("/getCategories", async (req, res) => {
+    res.status(200).send(await sqlQuery("SELECT * FROM categories"));
     console.log("getCategories");
 });
 
 app.get("/getAtractionByCategory/:category",async (req, res) => {
    // currCategory=JSON.parse(req.params);
-  var registerobject=await (sqlQuery("SELECT * FROM attractions WHERE category='"+req.params.category+"'")); 
-    res.status(200).send(sqlQuery("SELECT * FROM attractions WHERE category='"+req.params.category+"'"));
+  //var registerobject=await (sqlQuery("SELECT * FROM attractions WHERE category='"+req.params.category+"'")); 
+    res.status(200).send(await sqlQuery("SELECT * FROM attractions WHERE category='"+req.params.category+"'"));
     console.log("getAtractionByCategory");
 });
 
-app.post("/forgotPassword/:userName/:answer", (req, res) => {
-  currentAnswer=(sqlQuery("SELECT answer , password FROM users WHERE username='"+req.params.username+"'"));
-  if(currentAnswer.answer===req.params.answer){
-    res.status(200).send(currentAnswer.password);
+app.post("/forgotPassword",async (req, res) => {
+  var currentAnswer=(await sqlQuery("SELECT answer , password FROM users WHERE username='"+req.body.username+"'"));
+  if(currentAnswer.length>0 && currentAnswer[0]['answer']===req.body.answer){
+    res.status(200).send(currentAnswer[0].password);
   }
   else{
     res.status(200).send(("Wrong answer"));
@@ -56,15 +51,13 @@ app.post("/forgotPassword/:userName/:answer", (req, res) => {
 
 
 app.get("/getRandomPopularAttractions", async (req, res) => {
-    console.log('1');
 
    var goodAttraction=await (sqlQuery("SELECT * FROM attractions "));
     console.log(goodAttraction);
     goodAttraction=JSON.parse(JSON.stringify(goodAttraction));
     var size= goodAttraction.length;
-    console.log('3');
     if(size<4){
-       // res.status(200).send(goodAttraction);
+     res.status(200).send(goodAttraction);
     }
     else{ 
           var attractionResult=[];
@@ -87,38 +80,33 @@ app.get("/getRandomPopularAttractions", async (req, res) => {
     
         }
 
-    //res.status(200).send(attractionResult);
+    res.status(200).send(attractionResult);
     }
 });
 
-app.post("/register",(req, res) => {
-    var registerobject=JSON.parse(JSON.stringify(req.body)); 
-    var register=sqlQuery("INSERT INTO users (username,password,firstName, lastName, country,city,email,question,answer)"
-    +"VALUES('"+req.body.userName+"','"+req.body.password+"','"+req.body.firstName+"','"+ req.body.lastName+"','"+req.body.country+"','"+req.body.city+"','"+req.body.email+"','"+req.body.question+"','"+req.body.answer+"')");
+app.post("/register",async ( req, res) => {
+    var register=await sqlQuery("INSERT INTO users (username,password,firstName, lastName, country,city,email,question,answer)"
+    +"VALUES('"+req.body.username+"','"+req.body.password+"','"+req.body.firstName+"','"+ req.body.lastName+"','"+req.body.country+"','"+req.body.city+"','"+req.body.email+"','"+req.body.question+"','"+req.body.answer+"')");
   
     for(var i=0; i<req.body.interests.length;i++){
-        sqlQuery("INSERT INTO userInterests (username,categoryName) VALUES('"+req.body.userName+"','"+req.body.interests[i].categoryName+"')");
+        sqlQuery("INSERT INTO userInterests (username,categoryName) VALUES('"+req.body.username+"','"+req.body.interests[i].categoryName+"')");
     }
-    res.status(200).send("succes");
+    res.status(200).send("success");
     console.log("register");
 });
 
 
 
-app.get("/getRandomPopularAttractions", (req, res) => {
-    res.status(200).send(getRandomPopularAttractions());
-    console.log("Got GET Request");
-});
-app.get("/getAttractionsByCategory/:attractionName", (req, res) => {
-    res.status(200).send(getAttractionsByCategory(req.params));
-    console.log("Got GET Request");
+app.get("/getAttractionsByName/:attractionName",async (req, res) => {
+    res.status(200).send(await sqlQuery("SELECT * FROM attractions WHERE attractionName LIKE'%"+req.params.attractionName+"%'"));
+    console.log("getAttractionsByName");
 });
 
-app.post("/updateFavoriteAttractions/:userName/:attractions", (req, res) => {
-    res.status(200).send(updateFavoriteAttractions(req.params));
-    console.log("Got  Request");
+app.post("/updateFavoriteAttractions",async (req, res) => {
+    res.status(200).send( await sqlQuery("INSERT INTO userAttractions(username,attractionName) VALUES('"+req.body.username+"','"+req.body.attractionName+"')"));
+    console.log("updateFavoriteAttractions");
 });
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.get("/getFavoriteAttractions/:userName", (req, res) => {
     res.status(200).send(getFavoriteAttractions(req.params));
     console.log("Got GET Request");
@@ -175,8 +163,8 @@ app.get('/select', function(req, res){
     })
 })
 
-async function sqlQuery(query){
-return await DButilsAzure.execQuery(query)
+ function sqlQuery(query){
+return DButilsAzure.execQuery(query)
 .then(function(result){
     //console.log(result);
         return result;
