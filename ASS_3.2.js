@@ -4,25 +4,30 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
-app.post("/login/:userName/:password", (req, res) => {
+app.post("/login",(req, res) => {
  //   currUser=JSON.parse(req.params);
-    userRecord=sqlQuery("SELECT username,password FROM users WHERE username='"+currUser.username+"'");
-    if(userRecord.length>=0){
-        if(currUser.password===password){
+    var userRecord= sqlQuery("SELECT password FROM users WHERE username='"+req.body.username+"'");
+  //  var userRecord="SELECT password FROM users WHERE username='"+req.body.username+"'";
+   // DButilsAzure.execQuery(userRecord)
+   //.then(function(result){
+    //console.log(userRecord[0]['username']);
+    if(userRecord.length>0){
+
+        if(req.body.password===userRecord[0]['password']){
             res.status(200).send(("true"));
             console.log("Login success");
         }
         else{
             res.status(200).send(("false"));
             console.log("Wrong password");
-
+        
         }
     }
     else{
         res.status(200).send(("false"));
             console.log("Wrong username");
     }
-   
+      
 });
 
 
@@ -50,10 +55,10 @@ app.post("/forgotPassword/:userName/:answer", (req, res) => {
 });
 
 
-app.get("/getRandomPopularAttractions", (req, res) => {
+app.get("/getRandomPopularAttractions", async (req, res) => {
     console.log('1');
 
-   var goodAttraction=(sqlQuery("SELECT * FROM attractions "));
+   var goodAttraction=await (sqlQuery("SELECT * FROM attractions "));
     console.log(goodAttraction);
     goodAttraction=JSON.parse(JSON.stringify(goodAttraction));
     var size= goodAttraction.length;
@@ -171,7 +176,7 @@ app.get('/select', function(req, res){
 })
 
 async function sqlQuery(query){
-   await DButilsAzure.execQuery(query)
+return await DButilsAzure.execQuery(query)
 .then(function(result){
     //console.log(result);
         return result;
