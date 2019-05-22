@@ -41,4 +41,4 @@ function sqlQuery(query){
             return err;
         })
     
-    }
+}

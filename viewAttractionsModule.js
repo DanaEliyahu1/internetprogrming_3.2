@@ -98,7 +98,7 @@ app.get("/getMostPopularAttractionForUser/:username", async (req, res) => {
      console.log("viewAttraction");
  });
 
- function sqlQuery(query){
+function sqlQuery(query){
     return DButilsAzure.execQuery(query)
     .then(function(result){
         //console.log(result);
@@ -108,7 +108,5 @@ app.get("/getMostPopularAttractionForUser/:username", async (req, res) => {
             console.log(err)
             return err;
         })
-    
-    
-    }
+}
  

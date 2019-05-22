@@ -25,7 +25,7 @@ app.post("/login",async (req, res) => {
       
 });
 
-app.post("/forgotPassword",async (req, res) => {
+async function forgotPassword(req, res){
     var currentAnswer=(await sqlQuery("SELECT answer , password FROM users WHERE username='"+req.body.username+"'"));
     if(currentAnswer.length>0 && currentAnswer[0]['answer']===req.body.answer){
       res.status(200).send(currentAnswer[0].password);
@@ -34,10 +34,10 @@ app.post("/forgotPassword",async (req, res) => {
       res.status(200).send(("Wrong answer"));
       console.log("Wrong answer");
     }
-  });
+}
 
 
-  app.post("/register",async ( req, res) => {
+app.post("/register",async ( req, res) => {
     var register=await sqlQuery("INSERT INTO users (username,password,firstName, lastName, country,city,email,question,answer)"
     +"VALUES('"+req.body.username+"','"+req.body.password+"','"+req.body.firstName+"','"+ req.body.lastName+"','"+req.body.country+"','"+req.body.city+"','"+req.body.email+"','"+req.body.question+"','"+req.body.answer+"')");
   
@@ -48,7 +48,7 @@ app.post("/forgotPassword",async (req, res) => {
     console.log("register");
 });
 
-
+//module.exports.forgotPassword=forgotPassword;
 function sqlQuery(query){
     return DButilsAzure.execQuery(query)
     .then(function(result){
@@ -60,7 +60,5 @@ function sqlQuery(query){
             return err;
         })
     
-    
-    }
-
+}
 
