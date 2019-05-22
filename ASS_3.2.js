@@ -69,13 +69,18 @@ function checkRegisterInput(body){
     if(body.password.length<5 || boay.password.length>10 ){
         return "keep your password between 5 to 10 characters";
     }
-    if(city.length<2){
+    if(body.city.length<2){
         return "please enter a valid city name";
     }
-
-
-
-
+    if(body.country.length<2){
+        return "please enter a valid country name";
+    }
+    if(body.email.match(/^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/)){
+        return "please enter a valid email";
+    }
+    if(body.interests.length<2){
+        return "please enter at least two categories";
+    }
     return "success";
 }
 app.get("/getFavoriteAttractions/:username", async(req, res) => {
