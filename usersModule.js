@@ -1,15 +1,20 @@
-
+const jwt=require("jsonwebtoken")
 const express = require("express");
 const app = express();
 app.use(express.json());
 var DButilsAzure = require('./DButils');
-
-app.post("/login",async (req, res) => {
+const router=express.Router();
+var secret="secret123";
+router.post("/login",async (req, res) => {
     var userRecord= await sqlQuery("SELECT password FROM users WHERE username='"+req.body.username+"'");
     if(userRecord.length>0){
 
         if(req.body.password===userRecord[0]['password']){
-            res.status(200).send(("true"));
+           
+            payload = { id: req.body.username, name: req.body.username, admin: true };
+            options = { expiresIn: "1d" };
+            const token = jwt.sign(payload, secret, options);
+            res.status(200).send(token);
             console.log("Login success");
         }
         else{
@@ -25,19 +30,23 @@ app.post("/login",async (req, res) => {
       
 });
 
-async function forgotPassword(req, res){
+router.post("/forgotPassword",async (req, res) => {
     var currentAnswer=(await sqlQuery("SELECT answer , password FROM users WHERE username='"+req.body.username+"'"));
     if(currentAnswer.length>0 && currentAnswer[0]['answer']===req.body.answer){
       res.status(200).send(currentAnswer[0].password);
     }
     else{
-      res.status(200).send(("Wrong answer"));
+      res.status(200).send(("We could not confirm this answer for this user"));
       console.log("Wrong answer");
     }
-}
+  });
 
 
-app.post("/register",async ( req, res) => {
+router.post("/register",async ( req, res) => {
+    var inputVerified= checkRegisterInput(req.body);
+    if(inputVerified!="success"){
+        res.status(200).send(inputVerified);
+    }
     var register=await sqlQuery("INSERT INTO users (username,password,firstName, lastName, country,city,email,question,answer)"
     +"VALUES('"+req.body.username+"','"+req.body.password+"','"+req.body.firstName+"','"+ req.body.lastName+"','"+req.body.country+"','"+req.body.city+"','"+req.body.email+"','"+req.body.question+"','"+req.body.answer+"')");
   
@@ -47,6 +56,32 @@ app.post("/register",async ( req, res) => {
     res.status(200).send("success");
     console.log("register");
 });
+function checkRegisterInput(body){
+    if(body.username == undefined || body.password == undefined|| body.city == undefined || body.country == undefined
+         || body.firstName == undefined || body.lastName == undefined || body.email == undefined || body.question == undefined 
+         || body.answer == undefined  || body.interests == undefined){
+        return "please fill all fields";
+    }
+    if(body.username.length<3 || body.username.length>8){
+        return "keep your username between 3 to 8 characters";
+    }
+    if(body.password.length<5 || boay.password.length>10 ){
+        return "keep your password between 5 to 10 characters";
+    }
+    if(body.city.length<2){
+        return "please enter a valid city name";
+    }
+    if(body.country.length<2){
+        return "please enter a valid country name";
+    }
+    if(body.email.match(/^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/)){
+        return "please enter a valid email";
+    }
+    if(body.interests.length<2){
+        return "please enter at least two categories";
+    }
+    return "success";
+}
 
 //module.exports.forgotPassword=forgotPassword;
 function sqlQuery(query){
@@ -62,3 +97,4 @@ function sqlQuery(query){
     
 }
 
+module.exports=router;

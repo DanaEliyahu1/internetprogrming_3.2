@@ -26,7 +26,7 @@ app.post("/privateLogin", (req, res) => {
     res.send(token);
 });
 
-module.exports.login=
+
 
 
 

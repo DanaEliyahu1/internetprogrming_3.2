@@ -1,6 +1,6 @@
-
-
 const express = require("express");
+const router=express.Router();
+
 const app = express();
 app.use(express.json());
 var DButilsAzure = require('./DButils');
@@ -8,7 +8,7 @@ var DButilsAzure = require('./DButils');
 
 
 
-app.get("/getFavoriteAttractions/:username", async(req, res) => {
+router.get("/getFavoriteAttractions/:username", async(req, res) => {
     res.status(200).send(await sqlQuery("SELECT * FROM attractions WHERE attractionName IN"
     +"(SELECT attractionName FROM userAttractions WHERE username='"+req.params.username+"')"));
     console.log("getFavoriteAttractions");
@@ -16,12 +16,12 @@ app.get("/getFavoriteAttractions/:username", async(req, res) => {
 
 
 
-app.get("/getCategories", async (req, res) => {
+router.get("/getCategories", async (req, res) => {
     res.status(200).send(await sqlQuery("SELECT * FROM categories"));
     console.log("getCategories");
 });
 
-app.get("/getAtractionByCategory/:category",async (req, res) => {
+router.get("/getAtractionByCategory/:category",async (req, res) => {
    // currCategory=JSON.parse(req.params);
   //var registerobject=await (sqlQuery("SELECT * FROM attractions WHERE category='"+req.params.category+"'")); 
     res.status(200).send(await sqlQuery("SELECT * FROM attractions WHERE category='"+req.params.category+"'"));
@@ -31,7 +31,7 @@ app.get("/getAtractionByCategory/:category",async (req, res) => {
 
 
 
-app.get("/getRandomPopularAttractions", async (req, res) => {
+router.get("/getRandomPopularAttractions", async (req, res) => {
 
    var goodAttraction=await (sqlQuery("SELECT * FROM attractions "));
     console.log(goodAttraction);
@@ -69,7 +69,7 @@ app.get("/getRandomPopularAttractions", async (req, res) => {
 
 
 
-app.get("/getAttractionsByName/:attractionName",async (req, res) => {
+router.get("/getAttractionsByName/:attractionName",async (req, res) => {
     res.status(200).send(await sqlQuery("SELECT * FROM attractions WHERE attractionName LIKE'%"+req.params.attractionName+"%'"));
     console.log("getAttractionsByName");
 });
@@ -78,7 +78,7 @@ app.get("/getAttractionsByName/:attractionName",async (req, res) => {
 
 
 
-app.get("/getMostPopularAttractionForUser/:username", async (req, res) => {
+router.get("/getMostPopularAttractionForUser/:username", async (req, res) => {
     var attractions=(await sqlQuery("SELECT * FROM attractions  WHERE category IN"
      +"(SELECT categoryName FROM userInterests WHERE username='"+req.params.username+"')ORDER BY rating DESC;"));
   var popularAttractions=[];
@@ -92,7 +92,7 @@ app.get("/getMostPopularAttractionForUser/:username", async (req, res) => {
  
  
  
- app.put("/viewAttraction/:attractionName", async(req, res) => {
+ router.put("/viewAttraction/:attractionName", async(req, res) => {
      await(sqlQuery("UPDATE attractions SET views= views+1 WHERE attractionName='"+req.params.attractionName+"'"));
      res.status(200).send(await sqlQuery("SELECT * FROM attractions WHERE attractionName='"+req.params.attractionName+"'"));
      console.log("viewAttraction");
@@ -109,4 +109,4 @@ function sqlQuery(query){
             return err;
         })
 }
- 
+module.exports=router;
