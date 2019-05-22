@@ -5,6 +5,10 @@ app.use(express.json());
 var DButilsAzure = require('./DButils');
 const router=express.Router();
 var secret="secret123";
+
+
+
+
 router.post("/login",async (req, res) => {
     var userRecord= await sqlQuery("SELECT password FROM users WHERE username='"+req.body.username+"'");
     if(userRecord.length>0){
