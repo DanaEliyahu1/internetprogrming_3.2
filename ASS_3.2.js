@@ -6,8 +6,9 @@ const app = express();
 //const viewAttreactionsM=require("viewAttractionsModule");
 //const updateAttreactionsM=require("updateAttractionsModule");
 app.use(express.json());
-var DButilsAzure = require('./DButils');
+
 const port = process.env.PORT || 3000; //environment variable
+var DButilsAzure = require('./DButils');
 
 
 app.post("/login",async (req, res) => {
@@ -41,7 +42,6 @@ app.post("/forgotPassword",async (req, res) => {
       console.log("Wrong answer");
     }
   });
-
 
 app.post("/register",async ( req, res) => {
     var register=await sqlQuery("INSERT INTO users (username,password,firstName, lastName, country,city,email,question,answer)"
@@ -179,6 +179,7 @@ function sqlQuery(query){
             return err;
         })
 
-
 }
-
+app.listen(port, () => {
+    console.log(`Listening on port ${port}`);
+});
