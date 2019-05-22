@@ -38,12 +38,16 @@ app.post("/forgotPassword",async (req, res) => {
       res.status(200).send(currentAnswer[0].password);
     }
     else{
-      res.status(200).send(("Wrong answer"));
+      res.status(200).send(("We could not confirm this answer for this user"));
       console.log("Wrong answer");
     }
   });
 
 app.post("/register",async ( req, res) => {
+    var inputVerified= checkRegisterInput(req.body);
+    if(inputVerified!="success"){
+        res.status(200).send(inputVerified);
+    }
     var register=await sqlQuery("INSERT INTO users (username,password,firstName, lastName, country,city,email,question,answer)"
     +"VALUES('"+req.body.username+"','"+req.body.password+"','"+req.body.firstName+"','"+ req.body.lastName+"','"+req.body.country+"','"+req.body.city+"','"+req.body.email+"','"+req.body.question+"','"+req.body.answer+"')");
   
@@ -53,7 +57,27 @@ app.post("/register",async ( req, res) => {
     res.status(200).send("success");
     console.log("register");
 });
+function checkRegisterInput(body){
+    if(body.username == undefined || body.password == undefined|| body.city == undefined || body.country == undefined
+         || body.firstName == undefined || body.lastName == undefined || body.email == undefined || body.question == undefined 
+         || body.answer == undefined  || body.interests == undefined){
+        return "please fill all fields";
+    }
+    if(body.username.length<3 || body.username.length>8){
+        return "keep your username between 3 to 8 characters";
+    }
+    if(body.password.length<5 || boay.password.length>10 ){
+        return "keep your password between 5 to 10 characters";
+    }
+    if(city.length<2){
+        return "please enter a valid city name";
+    }
 
+
+
+
+    return "success";
+}
 app.get("/getFavoriteAttractions/:username", async(req, res) => {
     res.status(200).send(await sqlQuery("SELECT * FROM attractions WHERE attractionName IN"
     +"(SELECT attractionName FROM userAttractions WHERE username='"+req.params.username+"')"));
