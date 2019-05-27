@@ -54,8 +54,8 @@ router.post("/register",async ( req, res) => {
         res.status(400).send(inputVerified);
     }
     else{
-    var register=await sqlQuery("INSERT INTO users (username,password,firstName, lastName, country,city,email,question,answer)"
-    +"VALUES('"+req.body.username+"','"+req.body.password+"','"+req.body.firstName+"','"+ req.body.lastName+"','"+req.body.country+"','"+req.body.city+"','"+req.body.email+"','"+req.body.question+"','"+req.body.answer+"')");
+    var register=await sqlQuery("INSERT INTO users (username,password,firstName, lastName, country,city,email,question1,answer1,question2,answer2)"
+    +"VALUES('"+req.body.username+"','"+req.body.password+"','"+req.body.firstName+"','"+ req.body.lastName+"','"+req.body.country+"','"+req.body.city+"','"+req.body.email+"','"+req.body.question1+"','"+req.body.answer1+"','"+req.body.question2+"','"+req.body.answer2+"')");
   
     for(var i=0; i<req.body.interests.length;i++){
         sqlQuery("INSERT INTO userInterests (username,categoryName) VALUES('"+req.body.username+"','"+req.body.interests[i].categoryName+"')");
@@ -67,8 +67,9 @@ router.post("/register",async ( req, res) => {
 });
 function checkRegisterInput(body){
     if(body.username == undefined || body.password == undefined|| body.city == undefined || body.country == undefined
-         || body.firstName == undefined || body.lastName == undefined || body.email == undefined || body.question == undefined 
-         || body.answer == undefined  || body.interests == undefined){
+         || body.firstName == undefined || body.lastName == undefined || body.email == undefined || body.question1 == undefined 
+         || body.answer1 == undefined  || body.interests == undefined ||body.question2 == undefined 
+         || body.answer2 == undefined){
         return "please fill all fields";
     }
     if(body.username.length<3 || body.username.length>8){
