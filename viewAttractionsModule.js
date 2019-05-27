@@ -70,7 +70,7 @@ router.get("/getCategories", async (req, res) => {
     
 });
 
-router.get("/getAtractionByCategory/:category",async (req, res) => {
+router.get("/getAttractionsByCategory/:category",async (req, res) => {
     var username=verify(req,res);
     if(username != undefined){
         res.status(200).send(await sqlQuery("SELECT attractionName,picture FROM attractions WHERE category='"+req.params.category+"'"));

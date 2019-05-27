@@ -55,14 +55,41 @@ router.post("/addRating", async(req, res) => {
     //reminding the date format is  yyyy-mm-dd
     var username=verify(req,res);
     if(username != undefined){
-        res.status(200).send(await sqlQuery("INSERT INTO reviews (username,rating,review,date,attractionName)"+
+        var valid= await validRating(req.body);
+        if (valid != "success"){
+            res.status(400).send(valid);
+        }
+        else{
+              res.status(200).send(await sqlQuery("INSERT INTO reviews (username,rating,review,date,attractionName)"+
         " VALUES('"+username+"',"+req.body.rating+",'"+req.body.review+"','"+req.body.date+"','"+req.body.attractionName+"')"));
         var AveregeScore=await sqlQuery("SELECT AVG(rating) FROM reviews WHERE attractionName='"+req.body.attractionName+"'");
         await(sqlQuery("UPDATE attractions SET rating= "+AveregeScore[0]['']+" WHERE attractionName='"+req.body.attractionName+"'"));
         console.log("addRating");
+        }
+      
     }
     
 });
+
+async function validRating(body){
+if(body.rating== undefined || body.review== undefined || body.date==undefined || body.attractionName==undefined ){
+    return ("Please enter all fields");
+
+}
+if(body.rating<1 || body.rating> 5){
+    return ("Please enter rating between 1 -5 ");
+
+}
+if(body.date.length != 10){
+    return "Please enter date in format YYYY-MM-DD";
+}
+var attraction= await sqlQuery("SELECT attractionName FROM attractions WHERE attractionName='"+body.attractionName+"'");
+
+if(attraction.length==0){
+ return "Choose an existing attraction";   
+}
+return "succese";
+}
 
 function sqlQuery(query){
     console.log(query);
