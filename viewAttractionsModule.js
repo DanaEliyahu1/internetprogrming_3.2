@@ -29,8 +29,30 @@ function verify (req,res){
 router.get("/getFavoriteAttractions", async(req, res) => {
     var username=verify(req,res);
     if(username != undefined){
-        res.status(200).send(await sqlQuery("SELECT * FROM attractions WHERE attractionName IN"
+        res.status(200).send(await sqlQuery("SELECT attractionName,picture FROM attractions WHERE attractionName IN"
         +"(SELECT attractionName FROM userAttractions WHERE username='"+username+"')"));
+        console.log("getFavoriteAttractions");
+    }
+    
+});
+
+
+router.get("/getLastAttractions", async(req, res) => {
+    var username=verify(req,res);
+    if(username != undefined){
+        var lastAttractions=await sqlQuery("SELECT attractionName,picture FROM attractions WHERE attractionName IN"
+        +"(SELECT attractionName FROM userAttractions WHERE username='"+username+"') ORDER BY date");
+        if(lastAttractions.length>2){
+            var attractionResult=[];
+            for (var i = 0; i<2;i++){
+                attractionResult[i]=lastAttractions[i];
+            }
+            res.status(200).send(attractionResult);
+        }
+        else {
+            res.status(200).send(lastAttractions);
+        }
+        
         console.log("getFavoriteAttractions");
     }
     
@@ -51,7 +73,7 @@ router.get("/getCategories", async (req, res) => {
 router.get("/getAtractionByCategory/:category",async (req, res) => {
     var username=verify(req,res);
     if(username != undefined){
-        res.status(200).send(await sqlQuery("SELECT * FROM attractions WHERE category='"+req.params.category+"'"));
+        res.status(200).send(await sqlQuery("SELECT attractionName,picture FROM attractions WHERE category='"+req.params.category+"'"));
         console.log("getAtractionByCategory");
     }
     
@@ -63,7 +85,7 @@ router.get("/getAtractionByCategory/:category",async (req, res) => {
 router.get("/getRandomPopularAttractions", async (req, res) => {
     var username=verify(req,res);
     if(username != undefined){
-        var goodAttraction=await (sqlQuery("SELECT * FROM attractions "));
+        var goodAttraction=await (sqlQuery("SELECT attractionName,picture FROM attractions "));
         console.log(goodAttraction);
         goodAttraction=JSON.parse(JSON.stringify(goodAttraction));
         var size= goodAttraction.length;
@@ -104,7 +126,7 @@ router.get("/getRandomPopularAttractions", async (req, res) => {
 router.get("/getAttractionsByName/:attractionName",async (req, res) => {
     var username=verify(req,res);
     if(username != undefined){
-        res.status(200).send(await sqlQuery("SELECT * FROM attractions WHERE attractionName LIKE'%"+req.params.attractionName+"%'"));
+        res.status(200).send(await sqlQuery("SELECT attractionName,picture FROM attractions WHERE attractionName LIKE'%"+req.params.attractionName+"%'"));
         console.log("getAttractionsByName");
     }
 
@@ -114,11 +136,11 @@ router.get("/getAttractionsByName/:attractionName",async (req, res) => {
 
 
 
-router.get("/getMostPopularAttractionForUser/:username", async (req, res) => {
+router.get("/getMostPopularAttractionForUser", async (req, res) => {
     var username=verify(req,res);
     if(username != undefined){
         var attractions=(await sqlQuery("SELECT * FROM attractions  WHERE category IN"
-        +"(SELECT categoryName FROM userInterests WHERE username='"+req.params.username+"')ORDER BY rating DESC;"));
+        +"(SELECT categoryName FROM userInterests WHERE username='"+username+"')ORDER BY rating DESC;"));
         var popularAttractions=[];
         for(var i=0;i<Math.min(4,attractions.length);i++){
             popularAttractions[i]=attractions[i];

@@ -4,6 +4,8 @@ const app = express();
 app.use(express.json());
 var DButilsAzure = require('./DButils');
 const router=express.Router();
+var fs = require('fs');
+var parser = require('xml2json');
 var secret="secret123";
 
 
@@ -49,8 +51,9 @@ router.post("/forgotPassword",async (req, res) => {
 router.post("/register",async ( req, res) => {
     var inputVerified= checkRegisterInput(req.body);
     if(inputVerified!="success"){
-        res.status(200).send(inputVerified);
+        res.status(400).send(inputVerified);
     }
+    else{
     var register=await sqlQuery("INSERT INTO users (username,password,firstName, lastName, country,city,email,question,answer)"
     +"VALUES('"+req.body.username+"','"+req.body.password+"','"+req.body.firstName+"','"+ req.body.lastName+"','"+req.body.country+"','"+req.body.city+"','"+req.body.email+"','"+req.body.question+"','"+req.body.answer+"')");
   
@@ -59,6 +62,8 @@ router.post("/register",async ( req, res) => {
     }
     res.status(200).send("success");
     console.log("register");
+    }
+
 });
 function checkRegisterInput(body){
     if(body.username == undefined || body.password == undefined|| body.city == undefined || body.country == undefined
@@ -69,20 +74,35 @@ function checkRegisterInput(body){
     if(body.username.length<3 || body.username.length>8){
         return "keep your username between 3 to 8 characters";
     }
-    if(body.password.length<5 || boay.password.length>10 ){
+    if(body.password.length<5 || body.password.length>10 ){
         return "keep your password between 5 to 10 characters";
+    }
+    if((!body.username.match("^\s*([0-9a-zA-Z]+)\s*$")) || (!body.password.match("^\s*([0-9a-zA-Z]+)\s*$"))){
+        return "please make sure your username and password contain only letters and numbers";
     }
     if(body.city.length<2){
         return "please enter a valid city name";
     }
     if(body.country.length<2){
         return "please enter a valid country name";
-    }
-    if(body.email.match(/^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/)){
+    } 
+    
+    if(!body.email.match(/^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/)){
         return "please enter a valid email";
     }
     if(body.interests.length<2){
         return "please enter at least two categories";
+    }
+    countries =JSON.parse(parser.toJson("<Countries><Country><ID>1</ID><Name>Australia</Name></Country><Country><ID>2</ID><Name>Bolivia</Name></Country><Country><ID>3</ID><Name>China</Name></Country><Country><ID>4</ID><Name>Denemark</Name></Country><Country><ID>5</ID><Name>Israel</Name></Country><Country><ID>6</ID><Name>Latvia</Name></Country><Country><ID>7</ID><Name>Monaco</Name></Country><Country><ID>8</ID><Name>August</Name></Country><Country><ID>9</ID><Name>Norway</Name></Country><Country><ID>10</ID><Name>Panama</Name></Country><Country><ID>11</ID><Name>Switzerland</Name></Country><Country><ID>12</ID><Name>USA</Name></Country></Countries>", {reversible: true}));
+    var found=false;
+    for(var i=0; i<countries.Countries.Country.length;i++){
+        if(countries.Countries.Country[i]["Name"]["$t"]===body.country){
+            found=true;
+            break;
+        }
+    }
+    if(!found){
+        return "country not found in our databases";
     }
     return "success";
 }
