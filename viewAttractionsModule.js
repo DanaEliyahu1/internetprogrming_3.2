@@ -29,8 +29,8 @@ function verify (req,res){
 router.get("/getFavoriteAttractions", async(req, res) => {
     var username=verify(req,res);
     if(username != undefined){
-        res.status(200).send(await sqlQuery("SELECT attractionName,picture FROM attractions WHERE attractionName IN"
-        +"(SELECT attractionName FROM userAttractions WHERE username='"+username+"')"));
+        res.status(200).send(await sqlQuery("SELECT attractions.attractionName,picture FROM attractions, userAttractions WHERE attractions.attractionName=userAttractions.attractionName"
+        +" AND username='"+username+"' ORDER BY rank ASC")) ;
         console.log("getFavoriteAttractions");
     }
     
@@ -40,8 +40,8 @@ router.get("/getFavoriteAttractions", async(req, res) => {
 router.get("/getLastAttractions", async(req, res) => {
     var username=verify(req,res);
     if(username != undefined){
-        var lastAttractions=await sqlQuery("SELECT attractionName,picture FROM attractions WHERE attractionName IN"
-        +"(SELECT attractionName FROM userAttractions WHERE username='"+username+"') ORDER BY date");
+        var lastAttractions=await sqlQuery("SELECT attractions.attractionName,picture FROM attractions, userAttractions WHERE attractions.attractionName=userAttractions.attractionName"
+        +" AND username='"+username+"' ORDER BY lastSaved DESC");
         if(lastAttractions.length>2){
             var attractionResult=[];
             for (var i = 0; i<2;i++){
@@ -85,7 +85,7 @@ router.get("/getAttractionsByCategory/:category",async (req, res) => {
 router.get("/getRandomPopularAttractions", async (req, res) => {
     var username=verify(req,res);
     if(username != undefined){
-        var goodAttraction=await (sqlQuery("SELECT attractionName,picture FROM attractions "));
+        var goodAttraction=await (sqlQuery("SELECT attractionName,picture FROM attractions WHERE rating >= 4 "));
         console.log(goodAttraction);
         goodAttraction=JSON.parse(JSON.stringify(goodAttraction));
         var size= goodAttraction.length;

@@ -26,6 +26,7 @@ function verify (req,res){
 return undefined;
 }
 // do not need this ??
+/*
 router.post("/updateFavoriteAttractions",async (req, res) => {
     var username=verify(req,res);
     if(username != undefined){
@@ -33,16 +34,18 @@ router.post("/updateFavoriteAttractions",async (req, res) => {
         console.log("updateFavoriteAttractions");
     }
 });
-
+*/
 
 router.put("/updateMyAttractionSort/:rankArray/:dateArray",async (req, res) => {
     var username=verify(req,res);
     if(username != undefined){
         var arr= req.params.rankArray.split(',');
         var dateArr= req.params.dateArray.split(',');
+        await(sqlQuery("DELETE FROM userAttractions WHERE username='"+username+"'"));
         for(var i=0; i<arr.length;i++){ 
-        await(sqlQuery("UPDATE userAttractions SET rank= "+(i+1)+" WHERE attractionName='"+arr[i]+"' and username='"+username+"'"));
-        await(sqlQuery("UPDATE userAttractions SET date="+dateArr[i]+" WHERE attractionName='"+arr[i]+"' and username='"+username+"'"));
+
+        await(sqlQuery("INSERT INTO userAttractions (username,rank,lastSaved,attractionName) VALUES('"+username+"',"+(i+1)+",'"+dateArr[i]+"','"+arr[i]+"')"));
+
         }
         res.status(200).send("success");
         console.log("Got GET Request");
@@ -88,7 +91,7 @@ var attraction= await sqlQuery("SELECT attractionName FROM attractions WHERE att
 if(attraction.length==0){
  return "Choose an existing attraction";   
 }
-return "succese";
+return "success";
 }
 
 function sqlQuery(query){
