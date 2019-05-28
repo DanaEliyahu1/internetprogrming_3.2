@@ -37,8 +37,9 @@ router.post("/login",async (req, res) => {
 });
 
 router.post("/forgotPassword",async (req, res) => {
-    var currentAnswer=(await sqlQuery("SELECT answer , password FROM users WHERE username='"+req.body.username+"'"));
-    if(currentAnswer.length>0 && currentAnswer[0]['answer']===req.body.answer){
+    var currentAnswer=(await sqlQuery("SELECT answer1,answer2 , password FROM users WHERE username='"+req.body.username+"'"
+    +" AND (question1='"+req.body.qid +"' OR question2='"+req.body.qid +"') "));
+    if(currentAnswer.length>0 && (currentAnswer[0]['answer1']===req.body.answer||currentAnswer[0]['answer2']===req.body.answer)){
       res.status(200).send(currentAnswer[0].password);
     }
     else{
