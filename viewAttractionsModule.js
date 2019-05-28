@@ -163,6 +163,16 @@ router.get("/getMostPopularAttractionForUser", async (req, res) => {
      
  });
 
+ router.get("/getQuestions", async (req, res) => {
+    var username=verify(req,res);
+    if(username != undefined){
+        res.status(200).send(await sqlQuery("SELECT * FROM questions"));
+        console.log("getQuestions");
+    }
+
+    
+});
+
 function sqlQuery(query){
     return DButilsAzure.execQuery(query)
     .then(function(result){
