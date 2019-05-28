@@ -41,7 +41,7 @@ router.get("/getLastAttractions", async(req, res) => {
     var username=verify(req,res);
     if(username != undefined){
         var lastAttractions=await sqlQuery("SELECT attractions.attractionName,picture FROM attractions, userAttractions WHERE attractions.attractionName=userAttractions.attractionName"
-        +" AND username='"+username+"' ORDER BY lastSaved DESC");
+        +" AND username='"+username+"'");
         if(lastAttractions.length>2){
             var attractionResult=[];
             for (var i = 0; i<2;i++){

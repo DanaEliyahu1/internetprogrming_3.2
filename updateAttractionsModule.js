@@ -36,15 +36,15 @@ router.post("/updateFavoriteAttractions",async (req, res) => {
 });
 */
 
-router.put("/updateMyAttractionSort/:rankArray/:dateArray",async (req, res) => {
+router.put("/updateMyAttractionSort/:attractionArray/:rankArray",async (req, res) => {
     var username=verify(req,res);
     if(username != undefined){
-        var arr= req.params.rankArray.split(',');
-        var dateArr= req.params.dateArray.split(',');
+        var rankArr= req.params.rankArray.split(',');
+        var attractionArr= req.params.attractionArray.split(',');
         await(sqlQuery("DELETE FROM userAttractions WHERE username='"+username+"'"));
-        for(var i=0; i<arr.length;i++){ 
+        for(var i=0; i<rankArr.length;i++){ 
 
-        await(sqlQuery("INSERT INTO userAttractions (username,rank,lastSaved,attractionName) VALUES('"+username+"',"+(i+1)+",'"+dateArr[i]+"','"+arr[i]+"')"));
+        await(sqlQuery("INSERT INTO userAttractions (username,rank,attractionName) VALUES('"+username+"','"+rankArr[i]+"','"+attractionArr[i]+"')"));
 
         }
         res.status(200).send("success");
