@@ -7,10 +7,11 @@ app.use(express.json());
 var DButilsAzure = require('./DButils');
 var secret="secret123";
 
-function verify (req,res){
+function verify (req,res){        
         const token = req.header("x-auth-token");
         res.header("Access-Control-Allow-Origin","*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        return "nimrod";//for now!
         // no token
         if (!token){
             res.status(401).send("Access denied. No token provided.");
