@@ -154,7 +154,7 @@ router.get("/getMostPopularAttractionForUser", async (req, res) => {
  
  
  
- router.put("/viewAttraction/:attractionName", async(req, res) => {
+ router.get("/viewAttraction/:attractionName", async(req, res) => {
     var username=verify(req,res);
     if(username != undefined){
         await(sqlQuery("UPDATE attractions SET views= views+1 WHERE attractionName='"+req.params.attractionName+"'"));
