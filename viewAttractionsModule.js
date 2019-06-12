@@ -11,7 +11,8 @@ function verify (req,res){
         const token = req.header("x-auth-token");
         res.header("Access-Control-Allow-Origin","*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        return "nimrod";//for now!
+        console.log(req.body);
+       return "nimrod";//for now!
         // no token
         if (!token){
             res.status(401).send("Access denied. No token provided.");
@@ -61,7 +62,7 @@ router.get("/getLastAttractions", async(req, res) => {
     
 });
 
-router.get("/getCategories", async (req, res) => {
+router.post("/getCategories", async (req, res) => {
     var username=verify(req,res);
     if(username != undefined){
         res.status(200).send(await sqlQuery("SELECT * FROM categories"));

@@ -12,6 +12,8 @@ var secret="secret123";
 
 
 router.post("/login",async (req, res) => {
+    res.header("Access-Control-Allow-Origin","*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     var userRecord= await sqlQuery("SELECT password FROM users WHERE username='"+req.body.username+"'");
     if(userRecord.length>0){
 
@@ -37,6 +39,8 @@ router.post("/login",async (req, res) => {
 });
 
 router.post("/forgotPassword",async (req, res) => {
+    res.header("Access-Control-Allow-Origin","*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     var currentAnswer=(await sqlQuery("SELECT answer1,answer2 , password FROM users WHERE username='"+req.body.username+"'"
     +" AND (question1='"+req.body.qid +"' OR question2='"+req.body.qid +"') "));
     if(currentAnswer.length>0 && (currentAnswer[0]['answer1']===req.body.answer||currentAnswer[0]['answer2']===req.body.answer)){
@@ -50,6 +54,8 @@ router.post("/forgotPassword",async (req, res) => {
 
 
 router.post("/register",async ( req, res) => {
+    res.header("Access-Control-Allow-Origin","*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     var inputVerified= checkRegisterInput(req.body);
     if(inputVerified!="success"){
         res.status(400).send(inputVerified);

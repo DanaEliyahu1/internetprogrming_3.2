@@ -1,7 +1,13 @@
 const express = require("express");
 const app = express();
 
+
+
 app.use(express.json());
+
+//server side fronend
+app.use(express.static('D:\\documents\\users\\danaeliy\\Downloads\\ASS_3.3-master/ASS_3.3-master'))
+
 const userRouter=require("./usersModule");
 app.use('/private',userRouter);
 const viewRouter=require("./viewAttractionsModule");
