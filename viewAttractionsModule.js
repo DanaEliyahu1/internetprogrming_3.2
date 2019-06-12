@@ -62,7 +62,7 @@ router.get("/getLastAttractions", async(req, res) => {
     
 });
 
-router.post("/getCategories", async (req, res) => {
+router.get("/getCategories", async (req, res) => {
     var username=verify(req,res);
     if(username != undefined){
         res.status(200).send(await sqlQuery("SELECT * FROM categories"));
