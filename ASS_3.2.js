@@ -1,3 +1,5 @@
+
+
 const express = require("express");
 const app = express();
 
@@ -6,7 +8,16 @@ app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
-app.use(express.json());
+//app.use(express.json());
+
+app.use(express.json(),function(req, res, next) {
+	express.json();
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+
 
 //server side fronend
 app.use(express.static('D:\\documents\\users\\danaeliy\\Downloads\\ASS_3.3-master/ASS_3.3-master'))
