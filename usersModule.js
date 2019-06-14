@@ -5,7 +5,7 @@ app.use(express.json());
 var DButilsAzure = require('./DButils');
 const router=express.Router();
 var fs = require('fs');
-var parser = require('xml2json');
+
 var secret="secret123";
 
 
@@ -13,8 +13,14 @@ var secret="secret123";
 
 router.post("/login",async (req, res) => {
     res.header("Access-Control-Allow-Origin","*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     var userRecord= await sqlQuery("SELECT password FROM users WHERE username='"+req.body.username+"'");
+    console.log("h");
+    console.log(req.body);
+    console.log("h");
+    console.log(req.body.username);
+    console.log("h");
+    console.log(req.params);
     if(userRecord.length>0){
 
         if(req.body.password===userRecord[0]['password']){
@@ -26,13 +32,13 @@ router.post("/login",async (req, res) => {
             console.log("Login success");
         }
         else{
-            res.status(200).send(("false"));
+            res.status(400).send(("false"));
             console.log("Wrong password");
         
         }
     }
     else{
-        res.status(200).send(("false"));
+        res.status(400).send("wrong username");
             console.log("Wrong username");
     }
       
@@ -101,7 +107,7 @@ function checkRegisterInput(body){
     if(body.interests.length<2){
         return "please enter at least two categories";
     }
-    countries =JSON.parse(parser.toJson("<Countries><Country><ID>1</ID><Name>Australia</Name></Country><Country><ID>2</ID><Name>Bolivia</Name></Country><Country><ID>3</ID><Name>China</Name></Country><Country><ID>4</ID><Name>Denemark</Name></Country><Country><ID>5</ID><Name>Israel</Name></Country><Country><ID>6</ID><Name>Latvia</Name></Country><Country><ID>7</ID><Name>Monaco</Name></Country><Country><ID>8</ID><Name>August</Name></Country><Country><ID>9</ID><Name>Norway</Name></Country><Country><ID>10</ID><Name>Panama</Name></Country><Country><ID>11</ID><Name>Switzerland</Name></Country><Country><ID>12</ID><Name>USA</Name></Country></Countries>", {reversible: true}));
+    /*countries =JSON.parse(parser.toJson("<Countries><Country><ID>1</ID><Name>Australia</Name></Country><Country><ID>2</ID><Name>Bolivia</Name></Country><Country><ID>3</ID><Name>China</Name></Country><Country><ID>4</ID><Name>Denemark</Name></Country><Country><ID>5</ID><Name>Israel</Name></Country><Country><ID>6</ID><Name>Latvia</Name></Country><Country><ID>7</ID><Name>Monaco</Name></Country><Country><ID>8</ID><Name>August</Name></Country><Country><ID>9</ID><Name>Norway</Name></Country><Country><ID>10</ID><Name>Panama</Name></Country><Country><ID>11</ID><Name>Switzerland</Name></Country><Country><ID>12</ID><Name>USA</Name></Country></Countries>", {reversible: true}));
     var found=false;
     for(var i=0; i<countries.Countries.Country.length;i++){
         if(countries.Countries.Country[i]["Name"]["$t"]===body.country){
@@ -111,7 +117,7 @@ function checkRegisterInput(body){
     }
     if(!found){
         return "country not found in our databases";
-    }
+    }*/
     return "success";
 }
 
