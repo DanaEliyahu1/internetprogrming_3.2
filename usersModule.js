@@ -17,10 +17,6 @@ router.post("/login",async (req, res) => {
     var userRecord= await sqlQuery("SELECT password FROM users WHERE username='"+req.body.username+"'");
     console.log("h");
     console.log(req.body);
-    console.log("h");
-    console.log(req.body.username);
-    console.log("h");
-    console.log(req.params);
     if(userRecord.length>0){
 
         if(req.body.password===userRecord[0]['password']){
