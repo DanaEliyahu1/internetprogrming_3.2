@@ -2,6 +2,7 @@
 
 const express = require("express");
 const app = express();
+var cors=require("cors");
 
 var bodyParser = require('body-parser')
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
@@ -9,7 +10,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 //app.use(express.json());
-
+app.use(cors());
 app.use(express.json(),function(req, res, next) {
 	express.json();
     res.header("Access-Control-Allow-Origin", "*");

@@ -33,7 +33,7 @@ function verify (req,res){
 router.get("/getFavoriteAttractions", async(req, res) => {
     var username=verify(req,res);
     if(username != undefined){
-        res.status(200).send(await sqlQuery("SELECT attractions.attractionName,picture FROM attractions, userAttractions WHERE attractions.attractionName=userAttractions.attractionName"
+        res.status(200).send(await sqlQuery("SELECT attractions.attractionName,picture,rank FROM attractions, userAttractions WHERE attractions.attractionName=userAttractions.attractionName"
         +" AND username='"+username+"' ORDER BY rank ASC")) ;
         console.log("getFavoriteAttractions");
     }
