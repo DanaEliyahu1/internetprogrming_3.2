@@ -39,6 +39,9 @@ router.post("/updateFavoriteAttractions",async (req, res) => {
 });
 */
 
+
+
+
 router.put("/updateMyAttractionSort/:attractionArray/:rankArray",async (req, res) => {
     var username=verify(req,res);
     if(username != undefined){
