@@ -165,6 +165,24 @@ router.get("/getMostPopularAttractionForUser", async (req, res) => {
      
  });
 
+
+
+router.get("/getLastReviews/:attractionName", async(req,res)=>{
+var username=verify(req,res);
+if(username!= undefined){
+    var result=await(sqlQuery("SELECT * FROM reviews WHERE attractionName='"+ req.params.attractionName+"'ORDER BY date DESC") );
+    var reviews=[];
+    for(var i=0;i<Math.min(2,result.length);i++){
+        reviews[i]=result[i];
+    }
+    res.status(200).send(reviews);
+    console.log("getLastReviews");
+}
+})
+
+
+
+ 
  router.get("/getQuestions", async (req, res) => {
     var username=verify(req,res);
     if(username != undefined){
