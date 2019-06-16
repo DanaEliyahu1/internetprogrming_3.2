@@ -15,8 +15,6 @@ router.post("/login",async (req, res) => {
     res.header("Access-Control-Allow-Origin","*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     var userRecord= await sqlQuery("SELECT password FROM users WHERE username='"+req.body.username+"'");
-    console.log("h");
-    console.log(req.body);
     if(userRecord.length>0){
 
         if(req.body.password===userRecord[0]['password']){
@@ -28,7 +26,7 @@ router.post("/login",async (req, res) => {
             console.log("Login success");
         }
         else{
-            res.status(400).send(("false"));
+            res.status(400).send(("Wrong password"));
             console.log("Wrong password");
         
         }
@@ -87,8 +85,8 @@ function checkRegisterInput(body){
     if(body.password.length<5 || body.password.length>10 ){
         return "keep your password between 5 to 10 characters";
     }
-    if((!body.username.match("^\s*([0-9a-zA-Z]+)\s*$")) || (!body.password.match("^\s*([0-9a-zA-Z]+)\s*$"))){
-        return "please make sure your username and password contain only letters and numbers";
+    if((!body.username.match("^\s*([a-zA-Z]+)\s*$")) || (!body.password.match("^\s*([0-9a-zA-Z]+)\s*$"))){
+        return "please make sure your username contains only letters \n and password contains only letters and numbers";
     }
     if(body.city.length<2){
         return "please enter a valid city name";
