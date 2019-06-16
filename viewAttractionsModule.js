@@ -27,6 +27,8 @@ function verify(req, res) {
     return undefined;
 }
 
+
+
 router.get("/getFavoriteAttractions", async (req, res) => {
     var username = verify(req, res);
     if (username != undefined) {
